@@ -142,18 +142,23 @@ local function AskQuestion()
     if (randomOperation == 2) then correctAnswer = randomNumber1 - randomNumber2
     --create question in text object
     questionObject.text = randomNumber1 .. " - " .. randomNumber2 .. " = "
-        questionObject.text = randomNumber2 .. " - " .. randomNumber1 .. " = "
-   
+     
 end
 
 if (randomOperation == 3) then correctAnswer = randomNumber3 * randomNumber4
     --create question in text object
     questionObject.text = randomNumber3 .. " * " .. randomNumber4 .. " = "
 end
-
-
-
-local function HideCorrect()
+ --if the users answer and the correct answer are the same:
+            if (userAnswer == correctAnswer) then
+                correctObject.isVisible = true
+                timer.performWithDelay(1000,HideCorrect)
+                else
+                incorrectObject.isVisible = true
+                timer.performWithDelay(1000,HideIncorrect)
+            end
+         
+    local function HideCorrect()
     correctObject.isVisible = false
     AskQuestion()
 end
@@ -163,46 +168,22 @@ local function HideIncorrect()
     AskQuestion()
 end
 
-
 local function NumericFieldListener( event )
 
     --User begins editing "numericField"
     if ( event.phase == "began" ) then
-
-        --clear text field
-        event.target.text = ""
-
-        elseif event.phase == "submitted" then 
-            --when the answer is submitted (enter key is pressed) set user input to user's answer
-            userAnswer = tonumber(event.target.text)
-
-            --if the users answer and the correct answer are the same:
-            if (userAnswer == correctAnswer) then
-                correctObject.isVisible = true
-                timer.performWithDelay(1000,HideCorrect)
-                else 
-                incorrectObject.isVisible = true
-                timer.performWithDelay(1000,HideIncorrect)
-            end
-            --clear text field
+    
+    --clear text field
         event.target.text = ""
         end
     end
 
-    local function ScoreUpdater( event )
-            
-            if (userAnswer == correctAnswer) then
-                score = score + 1
-            end
-
-        
-            
-
-end
-  
-
-
--- variables for the timer
+       if event.phase == "submitted" then 
+            --when the answer is submitted (enter key is pressed) set user input to user's answer
+            userAnswer = tonumber(event.target.text)
+             --clear text field
+              event.target.text = ""
+        end
 
 
      -- displays a question and sets the colour 
