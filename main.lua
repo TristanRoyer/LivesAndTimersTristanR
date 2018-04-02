@@ -22,6 +22,8 @@ local correctAnswer = 0
 local incorrectObject
 local randomOperation = 0
 local numericField
+local scoreText
+local score = 0
 
 local clockText
 local totalSeconds = 10
@@ -35,8 +37,11 @@ local heart4
 
 local incorrectObject
 
-local GameOver = display.newImageRect("Images/gameOver.png",100,1000)
- GameOver.isVisible = false
+local GameOver = display.newImageRect("Images/gameOver.png",1999,1999)
+GameOver.isVisible = false
+
+local GameOverSound = audio.loadSound("Sounds/Game Over Sound Effect.mp3")
+local GameOverSoundChannel
 
 
    -- create the lives to display on the screen
@@ -75,7 +80,7 @@ heart4.y = display.contentHeight * 1 / 7
      questionObject:setTextColor(155/255, 0/255, 0/255)
 
       clockText = display.newText("TimeLeft:" .. secondsLeft,500,500,nil,40)
-    clockText:setTextColor(155/255,180/255,1/255)
+    clockText:setTextColor(155/255,180/255,0/255)
 
 
  local function AskQuestion()
@@ -141,7 +146,50 @@ if (secondsLeft == 0) then
 
 end
 
- if (lives == 4) then
+
+end
+
+    
+-- create a countdown timer that loops infinitely
+local countDownTimer = timer.performWithDelay( 1000, UpdateTime,0)
+
+
+local function StopTimer()
+   if (lives == 0) then
+      --stop the timer
+     timer.cancel(countDownTimer)
+ end
+end
+
+
+
+local function NumericFieldListener( event )
+
+    --User begins editing "numericField"
+    if ( event.phase == "began" ) then
+
+        --clear text field
+        event.target.text = ""
+
+        elseif event.phase == "submitted" then 
+            --when the answer is submitted (enter key is pressed) set user input to user's answer
+            userAnswer = tonumber(event.target.text)
+
+            --if the users answer and the correct answer are the same:
+            if (userAnswer == correctAnswer) then
+                correctObject.isVisible = true
+                timer.performWithDelay(1000,HideCorrect)
+                secondsLeft = totalSeconds
+                score = score + 1
+            scoreText.text = ("score:" .. score)
+
+                else
+                incorrectObject.isVisible = true
+                timer.performWithDelay(1000,HideIncorrect)
+                lives = lives - 1
+                secondsLeft = totalSeconds
+            end
+             if (lives == 4) then
     heart4.isVisible = true
     heart3.isVisible = true 
     heart2.isVisible = true
@@ -173,40 +221,11 @@ end
     heart1.isVisible = false
     --show image
     GameOver.isVisible = true
-end
-end
-
-    
--- create a countdown timer that loops infinitely
-local countDownTimer = timer.performWithDelay( 1000, UpdateTime,0)
-
-
-
-
-
-local function NumericFieldListener( event )
-
-    --User begins editing "numericField"
-    if ( event.phase == "began" ) then
-
-        --clear text field
-        event.target.text = ""
-
-        elseif event.phase == "submitted" then 
-            --when the answer is submitted (enter key is pressed) set user input to user's answer
-            userAnswer = tonumber(event.target.text)
-
-            --if the users answer and the correct answer are the same:
-            if (userAnswer == correctAnswer) then
-                correctObject.isVisible = true
-                timer.performWithDelay(1000,HideCorrect)
-                secondsLeft = totalSeconds
-                else
-                incorrectObject.isVisible = true
-                timer.performWithDelay(1000,HideIncorrect)
-                lives = lives - 1
-                secondsLeft = totalSeconds
-            end
+    --plays game over sound
+    GameOverSoundChannel = audio.play(GameOverSound)
+    --Stops Timer
+    StopTimer()
+  end
     --clear text field
         event.target.text = ""
         end
@@ -219,6 +238,9 @@ local function NumericFieldListener( event )
      -- Create Numeric field
      numericField = native.newTextField( 500, 350, 150, 30)
      numericField.inputType = "number"
+
+     --displays the score
+   scoreText = display.newText("score:" .. score, 500,600, nil, 40)
 
    
    -- add the event listener for the numeric field
