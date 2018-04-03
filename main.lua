@@ -61,6 +61,43 @@ heart4 = display.newImageRect("images/heart.png", 100, 100)
 heart4.x =  display.contentWidth * 4 / 8
 heart4.y = display.contentHeight * 1 / 7
 
+local function UpdateHearts()
+    if (lives == 4) then
+    heart4.isVisible = true
+    heart3.isVisible = true 
+    heart2.isVisible = true
+    heart1.isVisible = true   
+    end
+    if (lives == 3) then
+    heart4.isVisible = false 
+    heart3.isVisible = true
+    heart2.isVisible = true
+    heart1.isVisible = true
+    end
+    if (lives == 2) then
+    heart4.isVisible = false
+    heart3.isVisible = false
+    heart2.isVisible = true
+    heart1.isVisible = true
+    end
+    if (lives == 1) then
+    heart4.isVisible = false
+    heart3.isVisible = false
+    heart2.isVisible = false
+    heart1.isVisible = true
+    end
+
+    if (lives == 0) then
+    heart4.isVisible = false 
+    heart3.isVisible = false
+    heart2.isVisible = false
+    heart1.isVisible = false
+    --show image
+    GameOver.isVisible = true
+end
+end
+
+
 
 
 
@@ -133,20 +170,20 @@ end
 
 
 
-local function UpdateTime( )
+local function UpdateTime()
 
 -- decrement the number of Seconds
 secondsLeft = secondsLeft - 1
 clockText.text = ("TimeLeft:" .. secondsLeft)
 
+
 if (secondsLeft == 0) then 
     -- reset the number of seconds left in the clock object
     secondsLeft = totalSeconds
     lives = lives - 1
-
+    AskQuestion()
+    UpdateHearts()
 end
-
-
 end
 
     
@@ -155,11 +192,10 @@ local countDownTimer = timer.performWithDelay( 1000, UpdateTime,0)
 
 
 local function StopTimer()
-   if (lives == 0) then
       --stop the timer
      timer.cancel(countDownTimer)
  end
-end
+
 
 
 
@@ -188,48 +224,17 @@ local function NumericFieldListener( event )
                 timer.performWithDelay(1000,HideIncorrect)
                 lives = lives - 1
                 secondsLeft = totalSeconds
+                UpdateHearts()
             end
-             if (lives == 4) then
-    heart4.isVisible = true
-    heart3.isVisible = true 
-    heart2.isVisible = true
-    heart1.isVisible = true   
-    end
-    if (lives == 3) then
-    heart4.isVisible = false 
-    heart3.isVisible = true
-    heart2.isVisible = true
-    heart1.isVisible = true
-    end
-    if (lives == 2) then
-    heart4.isVisible = false
-    heart3.isVisible = false
-    heart2.isVisible = true
-    heart1.isVisible = true
-    end
-    if (lives == 1) then
-    heart4.isVisible = false
-    heart3.isVisible = false
-    heart2.isVisible = false
-    heart1.isVisible = true
-    end
-
-    if (lives == 0) then
-    heart4.isVisible = false 
-    heart3.isVisible = false
-    heart2.isVisible = false
-    heart1.isVisible = false
-    --show image
-    GameOver.isVisible = true
-    --plays game over sound
-    GameOverSoundChannel = audio.play(GameOverSound)
-    --Stops Timer
-    StopTimer()
-  end
     --clear text field
         event.target.text = ""
         end
-    end
+        if (lives == 0 ) then
+            StopTimer()
+            GameOverSoundChannel = audio.play(GameOverSound)
+end
+end
+    
     
 
 
