@@ -37,7 +37,9 @@ local heart4
 
 local incorrectObject
 
-local GameOver = display.newImageRect("Images/gameOver.png",1999,1999)
+local GameOver = display.newImageRect("Images/gameOver.png",1200,1400)
+GameOver.x = display.contentCenterX
+GameOver.Y = display.contentCenterY
 GameOver.isVisible = false
 
 local GameOverSound = audio.loadSound("Sounds/Game Over Sound Effect.mp3")
@@ -234,12 +236,6 @@ local function NumericFieldListener( event )
             GameOverSoundChannel = audio.play(GameOverSound)
 end
 end
-    
-    
-
-
-
-
      -- Create Numeric field
      numericField = native.newTextField( 500, 350, 150, 30)
      numericField.inputType = "number"
